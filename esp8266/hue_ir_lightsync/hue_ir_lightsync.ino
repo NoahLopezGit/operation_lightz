@@ -39,6 +39,13 @@ int dataIndex = 0; // Index to track where to store data
 char start_sequence[] = "data: ";
 const char *light_id = "238fca10-1896-44ed-8047-a3b6eac70842"; //my bedroom light
 
+#include "arduino_secrets.h"
+
+///////please enter your sensitive data in the Secret tab/arduino_secrets.h
+/////// WiFi Settings ///////
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
+
 void handle_packet(JsonDocument& doc) {
   // serializeJson(doc, Serial);
   int num_events = doc.size();
@@ -128,7 +135,7 @@ void setup() {
   }
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("Big Ls Clubhouse", "wittyraft698");
+  WiFiMulti.addAP(SECRET_SSID, SECRET_PASS);
 }
 
 void loop() {

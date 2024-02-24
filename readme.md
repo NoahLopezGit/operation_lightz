@@ -104,7 +104,7 @@ void setup() {
   }
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("Big Ls Clubhouse", "wittyraft698");
+  WiFiMulti.addAP("your wifi name", "your wifi password");
 }
 
 void loop() {
@@ -288,7 +288,7 @@ void setup() {
   }
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("Big Ls Clubhouse", "wittyraft698");
+  WiFiMulti.addAP("your wifi name", "your wifi password");
 }
 
 void loop() {
