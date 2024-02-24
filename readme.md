@@ -1,4 +1,26 @@
-## ESP8266 Implementation
+## Project Overview
+This project syncronizes the phillips-hue lighting system with 3rd party LEDs that are controlled by infrared remotes (IR remotes, like Tv remotes). 
+
+Demos:
+![On/Off control demo](https://www.youtube.com/shorts/3DD_msGkm7w)
+![Color control demo](https://www.youtube.com/shorts/cillKHZvEkQ)
+
+Hardware Needeed:
+- [ESP8266 Microcrontroller](https://www.amazon.com/HiLetgo-Internet-Development-Wireless-Micropython/dp/B081CSJV2V/ref=sr_1_3?crid=2FN80O4DEJ35Q&dib=eyJ2IjoiMSJ9.4xEr54v6vHUSws_RbogXUUQ0-qx0V7rAto5k-V99Mo0B0nICbDVzAQhl7oN_vez6h6I_iQWVLfWSQE1FCVuprA5YJ1QEEvuTtAwUl-Pv1QlIUN76l8YZnHXtN_q3rcoP7MQUSQHvrSm5hWsLkkhQXWyyjSHtN6FbixxEHky-_DTnwwE4OpbVHigxTFzypAsI_txCKg245Xo4zAAZbrvLMWYMtuxcqqW9dJRCkVbgO3s.iHiyCP1_ftZqlOarHK6rW__RVd4USzGyAUK-tuX9USc&dib_tag=se&keywords=esp8266&qid=1708795372&sprefix=esp826%2Caps%2C241&sr=8-3)
+- [Arduino Compatible IR Transmitter](https://www.amazon.com/Digital-Receiver-Transmitter-Electronic-Building/dp/B08X2MFS6S/ref=sr_1_3?crid=LV2HYJJ67B2B&dib=eyJ2IjoiMSJ9._vf72KYZ3KT9icycUs9mdM0CsoL-vlhHUhWBduX01chbdRf9ogw1yb3ScaPJKxriGIoUuo9_0lG49d2js_uIMINOJ3cXmQ7Jv-eysLc-SBEYQwJJ2mn_LoATZjl5XkzK-37B2MUVydVT8sQhzrY_6B4ak7v9PqmwDMIVparTQFXOoewNgNVv1AIhPWM5GN-xfqfgi74LaiLus1CnnDIEduFiifhG1LYH8rDXCy72Bg8.Eq7Ml8uMY73ev3FV3fXqfBEB8Ew0eEBwu8JQwosaKzA&dib_tag=se&keywords=ir+transmitter+arduino&qid=1708795775&sprefix=ir+transmitter+arduin+o%2Caps%2C187&sr=8-3)
+
+Concept of operations:
+1. The ESP8266 is used to connect to phillips-hue's existing lighting API.
+   1. The ESP8266 uses the HTTPS connection to establish the 'eventstream' endpoint. Any lighting changes are updated through this event stream
+2. The event stream is parsed for changes to a specific light 
+   1. This will need to be an existing smart light in the hue system; The IR remote controlled LED is synchronized with this light in the hue system.
+3. Changes like on/off state and color are then converted to their corresponding IR command and sent through the IR transmitter module.
+
+This project is working with this [Levitating Moon Lamp](https://www.amazon.com/VGAzer-Levitating-Floating-Spinning-Printing/dp/B07CR2JYPH/ref=sr_1_7?crid=3GX85ZF9NJFY5&dib=eyJ2IjoiMSJ9.Xn7z8MvuMuKHdWTVc01bqDk6qeGk6q3t2jc2lKmJgvNPJDdJbwNo5Wd_wTgc0rj-eTg7f8K0xyGAuzkzToHNE6rdS4E5WU8yvd1s4K2fPcjvmEJowMOmqKtgY8wjbjjUaCRZgjgu05ICUPWctfe8N9gs2oKWsY--IUp4kIQdsvirCf36yZ7B7CdCKoaiIm90TvYdw7rTX1grbETf3302U3O-K-C_dYDdHkDh5p_qTTIRexIgwcxvOUetipo6wAFYn4rVa0yH6CbapVVR0KCfPrbdxRIEGH8BHqnJUz-nSOY.R6E22jOTyq1MgoRUMVWY0s4bHgMr_b9oUrgh_gqicnc&dib_tag=se&keywords=levitating+moon+lamp&qid=1708794988&sprefix=levitating+m%2Caps%2C179&sr=8-7). Many other IR controlled LEDs use similar control schemes so controlling them is just a matter of figuring out the specfic IR protocol and command patterns.
+![Levitating Moon Lamp](https://m.media-amazon.com/images/I/61rLaPELHJL._AC_SX679_.jpg)
+
+
+## ESP8266 Implementation (Warning, these are my notes and are messy. Will clean up later.)
 This chip has "built-in TCP/IP Networking Software".
 
 ### How to Program?
