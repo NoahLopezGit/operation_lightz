@@ -1,5 +1,5 @@
 ## Project Overview
-This project syncronizes the phillips-hue lighting system with 3rd party LEDs that are controlled by infrared remotes (IR remotes, like Tv remotes). 
+Controlling a 3rd party IR remote controlled LED through the phillips-hue lighting system
 
 Demos:
 - [On/Off control demo](https://www.youtube.com/shorts/3DD_msGkm7w?feature=share)
