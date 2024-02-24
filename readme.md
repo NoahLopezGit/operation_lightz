@@ -2,8 +2,8 @@
 This project syncronizes the phillips-hue lighting system with 3rd party LEDs that are controlled by infrared remotes (IR remotes, like Tv remotes). 
 
 Demos:
-![On/Off control demo](https://www.youtube.com/shorts/3DD_msGkm7w?feature=share)
-![Color control demo](https://www.youtube.com/shorts/cillKHZvEkQ?feature=share)
+[On/Off control demo](https://www.youtube.com/shorts/3DD_msGkm7w?feature=share)
+[Color control demo](https://www.youtube.com/shorts/cillKHZvEkQ?feature=share)
 
 Hardware Needeed:
 - [ESP8266 Microcrontroller](https://www.amazon.com/HiLetgo-Internet-Development-Wireless-Micropython/dp/B081CSJV2V/ref=sr_1_3?crid=2FN80O4DEJ35Q&dib=eyJ2IjoiMSJ9.4xEr54v6vHUSws_RbogXUUQ0-qx0V7rAto5k-V99Mo0B0nICbDVzAQhl7oN_vez6h6I_iQWVLfWSQE1FCVuprA5YJ1QEEvuTtAwUl-Pv1QlIUN76l8YZnHXtN_q3rcoP7MQUSQHvrSm5hWsLkkhQXWyyjSHtN6FbixxEHky-_DTnwwE4OpbVHigxTFzypAsI_txCKg245Xo4zAAZbrvLMWYMtuxcqqW9dJRCkVbgO3s.iHiyCP1_ftZqlOarHK6rW__RVd4USzGyAUK-tuX9USc&dib_tag=se&keywords=esp8266&qid=1708795372&sprefix=esp826%2Caps%2C241&sr=8-3)
