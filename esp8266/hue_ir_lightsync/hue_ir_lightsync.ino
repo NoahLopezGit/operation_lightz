@@ -45,7 +45,7 @@ const char *light_id = "238fca10-1896-44ed-8047-a3b6eac70842"; //my bedroom ligh
 /////// WiFi Settings ///////
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
-char hue_application_key = HUE_APPLICATION_KEY;
+char hue_application_key[] = HUE_APPLICATION_KEY;
 
 void handle_packet(JsonDocument& doc) {
   // serializeJson(doc, Serial);
@@ -159,7 +159,7 @@ void loop() {
       // start connection and send HTTP header
       https.addHeader("Accept", "text/event-stream");
       https.addHeader("Connection", "Keep-Alive");
-      https.addHeader("hue-application-key", HUE_APPLICATION_KEY);
+      https.addHeader("hue-application-key", hue_application_key);
       int httpCode = https.GET();
       if (httpCode > 0) {
         // HTTP header has been send and Server response header has been handled

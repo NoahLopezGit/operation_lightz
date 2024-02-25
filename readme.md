@@ -1,5 +1,5 @@
 ## Project Overview
-Controlling a 3rd party IR remote controlled LED through the phillips-hue lighting system
+Controlling a 3rd party IR remote controlled LED through the Phillips-Hue lighting system
 
 Demos:
 - [On/Off control demo](https://www.youtube.com/shorts/3DD_msGkm7w?feature=share)
@@ -10,50 +10,65 @@ Hardware Needeed:
 - [Arduino Compatible IR Transmitter](https://www.amazon.com/Digital-Receiver-Transmitter-Electronic-Building/dp/B08X2MFS6S/ref=sr_1_3?crid=LV2HYJJ67B2B&dib=eyJ2IjoiMSJ9._vf72KYZ3KT9icycUs9mdM0CsoL-vlhHUhWBduX01chbdRf9ogw1yb3ScaPJKxriGIoUuo9_0lG49d2js_uIMINOJ3cXmQ7Jv-eysLc-SBEYQwJJ2mn_LoATZjl5XkzK-37B2MUVydVT8sQhzrY_6B4ak7v9PqmwDMIVparTQFXOoewNgNVv1AIhPWM5GN-xfqfgi74LaiLus1CnnDIEduFiifhG1LYH8rDXCy72Bg8.Eq7Ml8uMY73ev3FV3fXqfBEB8Ew0eEBwu8JQwosaKzA&dib_tag=se&keywords=ir+transmitter+arduino&qid=1708795775&sprefix=ir+transmitter+arduin+o%2Caps%2C187&sr=8-3)
 
 Concept of operations:
-1. The ESP8266 is used to connect to phillips-hue's existing lighting API.
+1. The ESP8266 is used to connect to Philips-Hue's existing lighting API.
    1. The ESP8266 uses the HTTPS connection to establish the 'eventstream' endpoint. Any lighting changes are updated through this event stream
 2. The event stream is parsed for changes to a specific light 
    1. This will need to be an existing smart light in the hue system; The IR remote controlled LED is synchronized with this light in the hue system.
 3. Changes like on/off state and color are then converted to their corresponding IR command and sent through the IR transmitter module.
 
-This project is working with this [Levitating Moon Lamp](https://www.amazon.com/VGAzer-Levitating-Floating-Spinning-Printing/dp/B07CR2JYPH/ref=sr_1_7?crid=3GX85ZF9NJFY5&dib=eyJ2IjoiMSJ9.Xn7z8MvuMuKHdWTVc01bqDk6qeGk6q3t2jc2lKmJgvNPJDdJbwNo5Wd_wTgc0rj-eTg7f8K0xyGAuzkzToHNE6rdS4E5WU8yvd1s4K2fPcjvmEJowMOmqKtgY8wjbjjUaCRZgjgu05ICUPWctfe8N9gs2oKWsY--IUp4kIQdsvirCf36yZ7B7CdCKoaiIm90TvYdw7rTX1grbETf3302U3O-K-C_dYDdHkDh5p_qTTIRexIgwcxvOUetipo6wAFYn4rVa0yH6CbapVVR0KCfPrbdxRIEGH8BHqnJUz-nSOY.R6E22jOTyq1MgoRUMVWY0s4bHgMr_b9oUrgh_gqicnc&dib_tag=se&keywords=levitating+moon+lamp&qid=1708794988&sprefix=levitating+m%2Caps%2C179&sr=8-7). Many other IR controlled LEDs use similar control schemes so controlling them is just a matter of figuring out the specfic IR protocol and command patterns.
-![Levitating Moon Lamp](https://m.media-amazon.com/images/I/61rLaPELHJL._AC_SX679_.jpg)
+This project is working with this [Levitating Moon Lamp](https://www.amazon.com/VGAzer-Levitating-Floating-Spinning-Printing/dp/B07CR2JYPH/ref=sr_1_7?crid=3GX85ZF9NJFY5&dib=eyJ2IjoiMSJ9.Xn7z8MvuMuKHdWTVc01bqDk6qeGk6q3t2jc2lKmJgvNPJDdJbwNo5Wd_wTgc0rj-eTg7f8K0xyGAuzkzToHNE6rdS4E5WU8yvd1s4K2fPcjvmEJowMOmqKtgY8wjbjjUaCRZgjgu05ICUPWctfe8N9gs2oKWsY--IUp4kIQdsvirCf36yZ7B7CdCKoaiIm90TvYdw7rTX1grbETf3302U3O-K-C_dYDdHkDh5p_qTTIRexIgwcxvOUetipo6wAFYn4rVa0yH6CbapVVR0KCfPrbdxRIEGH8BHqnJUz-nSOY.R6E22jOTyq1MgoRUMVWY0s4bHgMr_b9oUrgh_gqicnc&dib_tag=se&keywords=levitating+moon+lamp&qid=1708794988&sprefix=levitating+m%2Caps%2C179&sr=8-7). Many other IR controlled LEDs use similar control schemes so controlling them is just a matter of figuring out the specific IR protocol and command patterns.
+![Levitating Moon Lamp|500](https://m.media-amazon.com/images/I/61rLaPELHJL._AC_SX679_.jpg)
+
+# Setting up the event stream from the Phillips-Hue API
+First, you need to connect to the [hue bridge](https://www.amazon.com/Philips-Hue-Smart-Google-Assistant/dp/B016H0QZ7I/ref=sr_1_1?crid=2UVHT1W5TJJI6&dib=eyJ2IjoiMSJ9.6i4ofTweJSbH-34Kwnx3BefcnJiy8GGDpsduZGs3uSJvn4pbmIHII-4k7hXLDps6zCyrM3lxaAWwggefoNw6oWu5US4sAY01cUmpikWtZ17A_5xj3hGUAiclp_eYNEyL4OKrJtfLTsKClCnTZlU9LPMESXPRthza8fVoPK99z-ZxH9TWruTKXkyDqkkUYsuGD5di03QcTvPu8ACMvu4dciyExwn9JAGCarFidQ3-P3201sf-dA6Y3sNw8E6o9ok2g9z2GJDDKlvP929ZnE0Ke1OOOb-d8rzkCUtBhEwqzIs.Lo1waRPaiGU50nbrKfLyHd2gRS24PQZ529kNLqefCEg&dib_tag=se&keywords=philips+hue+bridge&qid=1708895090&sprefix=phillips+hue+bridg%2Caps%2C179&sr=8-1) which supports the [Phillips-Hue API v2](https://developers.meethue.com/new-hue-api/). Most bridges nowadays support this API version, but if you have an old one it may not. The API is HTTPS based, you will need a device capable of making HTTPS requests (i.e., supports secure socket layer, SSL protocol). There are some libraries which you allow HTTPS connections through microcontrollers like the Ardunio Uno, but the bottom line is that the program size needed to fully support the SSL protocol is too large for most microcontrollers. To perform this connection it is recommended to use a microcontroller which has the space/support for the SSL protocol built in (enter ESP8266). 
+
+**Before attempting to connect https with a microcontroller I recommend trying to connect to your bridge through python GET requests or some HTTPS request application like [Postman](https://www.postman.com/).**
+## Making an HTTPS request to the Phillips-Hue bridge
+A hue-application-key is needed connect to the Phillips-Hue bridge. Follow the directions on the Phillips-Hue Developer portal for connecting to your bridge for info on how to get this key. When this key is obtained, a simple request can be made to test the connection.
+```powershell
+curl --insecure -N -H 'hue-application-key: your-application-key' https://{your-bridge-ip}/clip/v2/resource/device
+```
+**Note, the hue-application-key is being passed to the https request as a header**. This can also be done using the python requests library like so:
+```python
+import requests, json
 
 
-## ESP8266 Implementation (Warning, these are my notes and are messy. Will clean up later.)
-This chip has "built-in TCP/IP Networking Software".
+bridge_ip = 'your-bridge-ip'
+url = f"https://{bridge_ip}/clip/v2/resource/device"
 
-### How to Program?
-[Setting Up the Arduino IDE to Program ESP8266 : 3 Steps - Instructables](https://www.instructables.com/Setting-Up-the-Arduino-IDE-to-Program-ESP8266/)
+headers = {"hue-application-key":"your-application-key"}
+r = requests.get(url, headers=headers, verify=False)
 
-The ESP8266 can be programmed through the Arduino IDE. 
+# Access response properties
+print(r.status_code)  # HTTP status code
+print(r.headers)     # Headers
+print(r.content)     # Raw content (bytes)
+print(r.text)        # Content as a string
+```
+**Note, in both cases these methods disable the SSL certificate verification (with curl `--insecure`; with python `verify=False`)**. Phillips-Hue recommends that your validate their provided private SSL certificate (see the developer portal HTTPS connections tab), but I have run into many issues with attempting this and it is not worth the effort. For implementations on your local network, there really isn't an issue with disabling the SSL certificate verification.
 
+The response content should be serialized JSON containing information about your Phillips-Hue network.
+
+## Implementing the HTTPS connection on the ESP8266
+**The ESP8266 can be programmed through the Arduino IDE.** It is compatible for programming with the Arduino IDE and there many libraries for the ESP8266 which can be loaded into this IDE.
 1. Add the latest stable release of the ESP866 libraries to Arduino's "Additional Board Manager URLs". ```http://arduino.esp8266.com/stable/package_esp8266com_index.json```
-2. The board I have is this one [Amazon.com: HiLetgo 3pcs ESP8266 NodeMCU CP2102 ESP-12E Development Board Open Source Serial Module Works Great for Arduino IDE/Micropython (Large) : Electronics](https://www.amazon.com/HiLetgo-Internet-Development-Wireless-Micropython/dp/B081CSJV2V/ref=sr_1_3?crid=3RY5L1PWV5FGI&dib=eyJ2IjoiMSJ9.gJShu3rQeKD8EK_mYUdf6cd4BpJCiIA6K-ygA0Pvs5nZCA8Fda1XucdQ68P8_r_yCtdOFaBMpkvhYCfFKoqqf6l1l83HW92eW5BHEfuQVcX6ao_6qMOjelS0dLL4Fv8mFD1CoPZfnWPy1sVTvfUxuP577Omi-V0C2BWmJklYvZhQcE_zBLhQ_V38iVCE4ElQM2pQ-J61loRnFOb-RhFFrhNDoz9O-WTVWdAj4Zbr25M.a6ClmRteiC9xIb58TLIvnpTA2p6NXxhyJ9eUxw0oe9k&dib_tag=se&keywords=hiletgo+esp8266&qid=1708305050&sprefix=hiletgo+esp8266%2Caps%2C146&sr=8-3)
-	1. This uses the NodeMCU 1.0 (ESP-12E) board type/config in Arduino.
-### Doing a basic get request
-1. After installing the ESP8266 Arduino library they have a good example in ESP8266HTTPClient > BasicHTTPSClient
-	1. Got this one working with the following commands
-	2. *This is different than the original https.begin format which uses \*client, "hostname", and port args.*
+2. The board I have is this one: [ESP8266 NodeMCU CP2102 ESP-12E](https://www.amazon.com/HiLetgo-Internet-Development-Wireless-Micropython/dp/B081CSJV2V/ref=sr_1_3?crid=3RY5L1PWV5FGI&dib=eyJ2IjoiMSJ9.gJShu3rQeKD8EK_mYUdf6cd4BpJCiIA6K-ygA0Pvs5nZCA8Fda1XucdQ68P8_r_yCtdOFaBMpkvhYCfFKoqqf6l1l83HW92eW5BHEfuQVcX6ao_6qMOjelS0dLL4Fv8mFD1CoPZfnWPy1sVTvfUxuP577Omi-V0C2BWmJklYvZhQcE_zBLhQ_V38iVCE4ElQM2pQ-J61loRnFOb-RhFFrhNDoz9O-WTVWdAj4Zbr25M.a6ClmRteiC9xIb58TLIvnpTA2p6NXxhyJ9eUxw0oe9k&dib_tag=se&keywords=hiletgo+esp8266&qid=1708305050&sprefix=hiletgo+esp8266%2Caps%2C146&sr=8-3)
+	1. This uses the NodeMCU 1.0 (ESP-12E) board type/config in Arduino. **This board selection provides the necessary libraries and examples to use the HTTPs functionality**
+
+### Doing a basic GET request
+After selecting the NodeMCU 1.0 (ESP-12E) in the board manager the Arduino IDE installs the necessary libraries to use this board. They have a good example for HTTPS requests in Node MCU 1.0 (ESP-12E) > ESP8266HTTPClient > BasicHTTPSClient. Got this one working with the following changes:
+1. Add bridge ip/endpoint to https.begin
 ```c++
-    if (https.begin(*client, "https://192.168.1.4/clip/v2/resource/device")) {  // HTTPS
-      Serial.print("Connected");
-      Serial.print("[HTTPS] GET...\n");
-      // start connection and send HTTP header
-      https.addHeader("hue-application-key", "***********************************************");
-      int httpCode = https.GET();
-      ...
-  };
+    if (https.begin(*client, "https://your-bridge-ip/clip/v2/resource/device")) {  // HTTPS
+```
+*This is different than the original https.begin format which uses \*client, "hostname", and port args.*
+3. Set connection to insecure
+```c++
+client->setInsecure();
 ```
 
-Now need to get the event stream working... the event stream endpoint is ```/eventstream/clip/v2```. Also pass these headers
-```json
-"Accept": "text/event-stream",
-"Connection": "Keep-Alive"
-```
-
-### Getting the Event Stream
-There is a good example in ESP8266HTTPClient > StreamHTTPSClient. I had to change a few things:
+### Getting the HTTPS event stream
+There is another good example in Node MCU 1.0 (ESP-12E) > ESP8266HTTPClient > StreamHTTPSClient which can be modified to fit the needs of this project. I had to change a few things:
 1.  event stream endpoint
 ```c++
 if(https.begin(*client, "https://192.168.1.4/eventstream/clip/v2")) {...};
@@ -62,376 +77,225 @@ if(https.begin(*client, "https://192.168.1.4/eventstream/clip/v2")) {...};
 ```c++
       https.addHeader("Accept", "text/event-stream");
       https.addHeader("Connection", "Keep-Alive");
-      https.addHeader("hue-application-key", "***********************************************");
+      https.addHeader("hue-application-key", "your-application-key");
 ```
-3. connection insecure
+3. Set connection to insecure
 ```c++
 client->setInsecure();
 ```
-4. Note this program still uses ```https.GET()``` and not ```https.getStream()```
+4. Note, this program still uses ```https.GET()``` and not ```https.getStream()```
 
-**Here is the whole file:**
-```c++
-/**
-   StreamHTTPClient.ino
+This program prints each character essentially as it is received from the HTTPs stream. For this project it is easiest to parse JSON objects from this event stream which we can check for the relevant light commands.
 
-    Created on: 24.05.2015
-
-*/
-
-#include <Arduino.h>
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-
-#include <ESP8266HTTPClient.h>
-
-ESP8266WiFiMulti WiFiMulti;
-
-void setup() {
-
-  Serial.begin(115200);
-  // Serial.setDebugOutput(true);
-
-  Serial.println();
-  Serial.println();
-  Serial.println();
-
-  for (uint8_t t = 4; t > 0; t--) {
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
-    delay(1000);
-  }
-
-  WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("your wifi name", "your wifi password");
-}
-
-void loop() {
-  // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) {
-
-    std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
-
-    bool mfln = client->probeMaxFragmentLength("tls.mbed.org", 443, 1024); //what is this?
-    Serial.printf("\nConnecting");
-    Serial.printf("Maximum fragment Length negotiation supported: %s\n", mfln ? "yes" : "no");
-    if (mfln) { client->setBufferSizes(1024, 1024); }
-
-    Serial.print("[HTTPS] begin...\n");
-
-    // configure server and url
-    const uint8_t fingerprint[20] = { 0x15, 0x77, 0xdc, 0x04, 0x7c, 0x00, 0xf8, 0x70, 0x09, 0x34, 0x24, 0xf4, 0xd3, 0xa1, 0x7a, 0x6c, 0x1e, 0xa3, 0xe0, 0x2a };
-
-    // client->setFingerprint(fingerprint);
-    client->setInsecure();
-
-
-    HTTPClient https;
-
-    if (https.begin(*client, "https://192.168.1.4/eventstream/clip/v2")) {
-
-      Serial.print("[HTTPS] GET...\n");
-      // start connection and send HTTP header
-      https.addHeader("Accept", "text/event-stream");
-      https.addHeader("Connection", "Keep-Alive");
-      https.addHeader("hue-application-key", "***********************************************");
-      int httpCode = https.GET();
-      if (httpCode > 0) {
-        // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-
-        // file found at server
-        if (httpCode == HTTP_CODE_OK) {
-
-          // get length of document (is -1 when Server sends no Content-Length header)
-          int len = https.getSize();
-
-          // create buffer for read
-          static uint8_t buff[128] = { 0 };
-
-          // read all data from server
-          while (https.connected() && (len > 0 || len == -1)) {
-            // get available data size
-            size_t size = client->available();
-
-            if (size) {
-              // read up to 128 byte
-              int c = client->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
-
-              // write it to Serial
-              Serial.write(buff, c);
-
-              if (len > 0) { len -= c; }
-            }
-            delay(1);
-          }
-
-          Serial.println();
-          Serial.print("[HTTPS] connection closed or file end.\n");
-        }
-      } else {
-        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
-      }
-
-      https.end();
-    } else {
-      Serial.printf("Unable to connect\n");
-    }
-  }
-
-  Serial.println("Wait 10s before the next round...");
-  delay(10000);
-}
-```
-
-### Parsing JSON from the event stream
-First I need to answer the question, where does the current readBytes() method come from (being used by the event stream example).
-
-The client is calling the readBytes method like so. This is a special implementation of the normal object oriented structure (object.method). *The client in this case is a pointer to an object*.
-```c++
-client->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
-```
-I believe it was created here in the code `std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);`
-This is smart pointer (pointer which auto deletes when it isn't being used anymore), `client` (uses the format `std::unique_ptr<Obj> name(new Obj);`). The actual object being created is the `BearSSL::WifiClientSecure` object.
-The `BearSSL::WifiClientSecure` [extends the WiFiClient class](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/bearssl-client-secure-class.html#:~:text=It%20extends%20WiFiClient%20and%20so%20can%20be%20used%20with%20minimal%20changes%20to%20code%20that%20does%20unsecured%20communications). Not just any WiFiClient class, but the ESP8266WIFI WiFiClient class. The specific method being used in client->readBytes() can be found [here](https://arduino-esp8266.readthedocs.io/en/latest/reference.html#streams:~:text=The%20readBytes(buffer,g.%20HardwareSerial%3A%3A.). This method is of the following format,
-```c++
-?::readBytes(buff, len);
-```
-where the buff is a character array and the length is the amount of bytes to read to (and modify?) the buff.
-
-I don't necessarily have to use this buff, I need to find the smallest chunk of data needed to get the event change information.
-Actually, the easiest approach (hardware allows for it) would be to load the whole object into json and then analyze it. Need to see if I can find a serial stream to json library. Referencing this tutorial: [[arduinojson_deserialization_tutorial.pdf]].
+## Parsing JSON from the event stream
+ The [ArduinoJSON](https://arduinojson.org/) can be used to deserialize (extract) the JSON ojbects from the event stream. The easiest approach (hardware allows for it) would be to load the whole object into json and then analyze it. Need to see if I can find a serial stream to json library. Referencing this tutorial: [Deserialization tutorial | ArduinoJson 6](https://arduinojson.org/v6/doc/deserialization/).
 
 [ArduinoJson supports parsing from stream](https://arduinojson.org/#:~:text=Parse%20From%20Stream,reader%20types.) and even lists support for WiFiClients. They say "ArduinoJson can parse directly from an input [`Stream`](https://www.arduino.cc/reference/en/language/functions/communication/stream/) or [`std::istream`](https://en.cppreference.com/w/cpp/io/basic_istream)". The ESP WifiClientSecure class is derived from Stream. So this should be usable with the current code.
-![[esp8266 WiFiClientSecure is Stream.png]]
+
+**Find start sequence of JSON serial stream "DATA: "; Pass stream to JSON de-serializer once start is found.**
 Section 3.10.2 Reading from an HTTP response has information relevant to what I'm trying to do. It seems that this will only work if it passed the Stream when you know that the next serial stream is the valid json. I think I need to first search for the start sequence of the json serial stream and then start the parsing. This code from ChatGPT seems find the start sequence. I think there is an edge case where part of the start sequence is transmitted and immediately followed by the actual start sequence (i.e., "DADATA: " if the start sequence is "DATA: "), but I think this case isn't possible with the format of the transmitted data.
+
 ```c++
 const char startSequence[] = "SD:"; // Your desired start sequence
-char receivedData[100]; // Adjust the array size as needed
-int dataIndex = 0; // Index to track where to store data
+char receivedData[100];             // Adjust the array size as needed
+int dataIndex = 0;                  // Index to track where to store data
 
 void setup() {
-  Serial.begin(9600);
+    Serial.begin(9600);
 }
 
-void loop() {
-  while (Serial.available()) {
-    char incomingChar = Serial.read();
-
-    // Check if the incoming character matches the start sequence
-    if (incomingChar == startSequence[dataIndex]) {
-      dataIndex++; // Move to the next character in the start sequence
-      if (dataIndex == strlen(startSequence)) {
-        // Start sequence found, start storing data
-        while (Serial.available()) {
-          incomingChar = Serial.read();
-          if (incomingChar == '\n') {
-            // End marker (newline) encountered, process the data
-            receivedData[dataIndex] = '\0'; // Null-terminate the array
-            Serial.print("Received data: ");
-            Serial.println(receivedData);
-            // Now you can further process 'receivedData' as needed
-            // Reset the index for the next start sequence
-            dataIndex = 0;
-            break;
-          }
-          // Store the character in the array
-          receivedData[dataIndex++] = incomingChar;
-          if (dataIndex >= sizeof(receivedData) - 1) {
-            // Array full, handle overflow or reset the index
-            // (e.g., discard data or start over)
-            dataIndex = 0;
-          }
-        }
-      }
-    } else {
-      // Reset the index if the incoming character doesn't match
-      dataIndex = 0;
-    }
-  }
-}
-```
-
-After adapting the start sequence code above to my StreamHTTPSClient example and adding the json deserializer I was able to effectively parse the incoming json packets. Note, I wasn't sure if the deserializer could auto detect if the end of the json object was reached and stop parsing, but it seems it can. Also ArduinoJson has a nice function to print the json object serialized to the Serial output (`serializeJson(doc, Serial);`)
-```c++
-/**
-   StreamHTTPClient.ino
-
-    Created on: 24.05.2015
-
-*/
-
-#include <Arduino.h>
-#include <ArduinoJson.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-#include <ESP8266HTTPClient.h>
-
-ESP8266WiFiMulti WiFiMulti;
-int dataIndex = 0; // Index to track where to store data
-char start_sequence[] = "data: ";
-
-void setup() {
-
-  Serial.begin(115200);
-  // Serial.setDebugOutput(true);
-
-  Serial.println();
-  Serial.println();
-  Serial.println();
-
-  for (uint8_t t = 4; t > 0; t--) {
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
-    delay(1000);
-  }
-
-  WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("your wifi name", "your wifi password");
-}
-
-void loop() {
-  // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) {
-
-    std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
-
-    bool mfln = client->probeMaxFragmentLength("tls.mbed.org", 443, 1024); //what is this?
-    Serial.printf("\nConnecting");
-    Serial.printf("Maximum fragment Length negotiation supported: %s\n", mfln ? "yes" : "no");
-    if (mfln) { client->setBufferSizes(1024, 1024); }
-
-    Serial.print("[HTTPS] begin...\n");
-    client->setInsecure();
-    HTTPClient https;
-
-    if (https.begin(*client, "https://192.168.1.4/eventstream/clip/v2")) {
-      Serial.print("[HTTPS] GET...\n");
-      // start connection and send HTTP header
-      https.addHeader("Accept", "text/event-stream");
-      https.addHeader("Connection", "Keep-Alive");
-      https.addHeader("hue-application-key", "***********************************************");
-      int httpCode = https.GET();
-      if (httpCode > 0) {
-        // HTTP header has been send and Server response header has been handled
-        Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
-
-        // file found at server
-        if (httpCode == HTTP_CODE_OK) {
-
-          // get length of document (is -1 when Server sends no Content-Length header)
-          int len = https.getSize();
-
-          // read all data from server
-          while (https.connected() && (len > 0 || len == -1)) {
-            Stream& response = https.getStream(); //This doesn't have to be initialized everytime a start sequence is found.
-            
-	        //read incoming char, eval against start sequence. if start sequence, parse json object and print to serial.
-            char incomingChar = client->read();
-            if (incomingChar == start_sequence[dataIndex]) {
-              dataIndex++; // Move to the next character in the start sequence
-              if (dataIndex == strlen(start_sequence)) {
-                // Allocate the JsonDocument in the heap
-                DynamicJsonDocument doc(2048);
-                // Deserialize the JSON document in the response
-                deserializeJson(doc, response); //this is assuming it knows when to stop. Assumption seems correct.
-                serializeJson(doc, Serial); //Nice function to serialize json object and print to Serial
-                Serial.println();
-              }
-            } else {
-              // Reset the index if the incoming character doesn't match
-              dataIndex = 0;
+void loop()
+{
+    while (Serial.available()) {
+        char incomingChar = Serial.read();
+        // Check if the incoming character matches the start sequence
+        if (incomingChar == startSequence[dataIndex]) {
+            dataIndex++; // Move to the next character in the start sequence
+            if (dataIndex == strlen(startSequence)) {
+                // Start sequence found, do thing
+                while (Serial.available()) {
+                    ...
+                }
             }
-            delay(1);
-          }
-          Serial.println();
-          Serial.print("[HTTPS] connection closed or file end.\n");
         }
-      } else {
-        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
-      }
-
-      https.end();
     } else {
-      Serial.printf("Unable to connect\n");
+        // Reset the index if the incoming character doesn't match
+        dataIndex = 0;
     }
-  }
-
-  Serial.println("Wait 10s before the next round...");
-  delay(10000);
 }
 ```
 
-**What does that arrow notation do?**
-this is a shorthand notation to directly access the method of an object *through* the a pointer of that object. For example, in the below code `ptr->printValue()` is equivalent to `(*ptr).printValue()`.
-```c++
-#include <iostream>
+After adapting the start sequence code above to my StreamHTTPSClient example and adding the json deserializer I was able to effectively parse the incoming json packets. **Note, I wasn't sure if the deserializer could auto detect if the end of the json object was reached and stop parsing, but it seems it can**. Also ArduinoJson has a nice function to print the json object serialized to the Serial output (`serializeJson(doc, Serial);`)
 
-struct MyClass {
-    int value;
-    void printValue() {
-        std::cout << "Value: " << value << std::endl;
+### Extracting Data from the JSON object
+I am looking for packets which have a certain "id" (Phillips-Hue's v2 API identification of different lights in your network). Once the whole JSON object is loaded, it can be accessed to get only packets which contain changes for the relevant light. These changes can then handled, and the corresponding commands sent to the IR controller.
+**Example event stream:**
+```json
+: hi
+
+
+
+id: 1708404744: 0
+
+data: [
+    {
+        "creationtime": "2024-02-20T04:52:24Z",
+        "data": [
+            {
+                "id": "a7b863de-bce8-4933-86c2-34c8ade5cb79",
+                "id_v1": "/lights/2",
+                "on": {
+                    "on": false
+                },
+                "owner": {
+                    "rid": "4be3ce23-a0b2-4b52-a617-155d7685c97f",
+                    "rtype": "device"
+                },
+                "type": "light"
+            },
+            {
+                "id": "7ba3c2e7-1b1b-4189-941f-b434d60c75cb",
+                "id_v1": "/lights/3",
+                "on": {
+                    "on": false
+                },
+                "owner": {
+                    "rid": "33a4714d-347e-409a-9b55-2d1c02ee91c0",
+                    "rtype": "device"
+                },
+                "type": "light"
+            },
+            {
+                "id": "54cd2081-b12a-4a68-b9ec-08643af1be98",
+                "id_v1": "/lights/1",
+                "on": {
+                    "on": false
+                },
+                "owner": {
+                    "rid": "32955bfa-5b17-4d0f-95be-e04055d1f7b2",
+                    "rtype": "device"
+                },
+                "type": "light"
+            },
+            {
+                "id": "238fca10-1896-44ed-8047-a3b6eac70842",
+                "id_v1": "/lights/5",
+                "on": {
+                    "on": false
+                },
+                "owner": {
+                    "rid": "ae4464f3-c195-446b-b789-424aed521370",
+                    "rtype": "device"
+                },
+                "type": "light"
+            }
+        ],
+        "id": "7b343c5e-f374-4c82-a024-0915647c998a",
+        "type": "update"
     }
-};
-
-int main() {
-    MyClass obj; // Create an object of MyClass
-    obj.value = 42;
-
-    MyClass* ptr = &obj; // Create a pointer to obj
-
-    // Using the arrow operator to access obj's member through the pointer
-    ptr->printValue();
-
-    // Using the dot operator directly on the object
-    obj.printValue();
-
-    return 0;
-}
+]
 ```
 
-### Handling JSON events
-**Ignore all of the following rambling I found the issue: In redefining the handle_packet function I lost the deserializeJson function which actually writes the Json data to the created JsonDocument object. If this function isn't called the empty JsonDocument object will be null (as per documentation); I was then passing this null value to the handle packet function and it was printing the null object through serial. After fixing this issue the pass by reference defined below was working.**
-If I define a function to handle the JsonDocument how can I pass the JsonDocument to it? Here is what I have so far. This would be an example of pass by reference. You would call the function like so `handle_packet(doc);`. The &doc here usually means get the memory address of the doc object (standard notation is like this: `int* ptr = &val;`). This doesn't seem to work; The program compiles but the output of this function is null when it should be the json serial stream.
+In this case I want to get the ID with `obj[0]["data"][0]["id"]`. When I find the correct packets I can then get the light state change with `obj[0]["data"][0]["on"]` or `obj[0]["data"][0]["color"]`.
+
+Through some accessing/algorithm logic found in the main .ino program this can be accomplished. A couple of notes for using ArduinoJSON:
+1. A JSON Object (JsonDocument in ArduinoJSON) can be loaded from the event stream by first creating a DynamicJsonDocument object and passing this to the deserializeJson() function along with the HTTPS stream (accessed here with `Stream& response = https.getStream();`.
 ```c++
-void handle_packet(JsonDocument& doc) {
-  serializeJson(doc, Serial);
-  Serial.println();
+// Allocate the JsonDocument in the heap
+DynamicJsonDocument doc(2048);
+// Deserialize the JSON document in the response
+deserializeJson(doc, response); //this is assuming it knows when to stop. Assumption seems correct.
+```
+2. A JsonObject can be extracted from an enveloping JsonDocument like so. This can be passed to a function *by reference*:
+```c++
+JsonObject obj = doc[i]["data"][j].as<JsonObject>();
+check_command_keys(obj);
+
+void check_command_keys(JsonObject& obj) {
+	//do something
+	serializeJson(obj, Serial);
 }
 ```
 
-I'm not sure exactly what the below signatures are describing, but it suggests to me that the function uses pass by reference for the JsonDocument obj. Note we are creating a DynamicJsonDocument object not a JsonDocument object, but these objects are compatible in some way (where I think static/dynamicJsonDocument are the same JsonDocument object but the notation affects how the object is created in some way).
-![[deserializeJson func signatures.png]]
-1. Need to identify specific light we want to sync IR light to.
-	1. Look for json events with that specific light.
+When the appropriate light status change data has been extracted, it can be connected to the corresponding IR commands to control the moon light.
 
-The json data is returned as an array of event objects. Need to iterate over this array, searching for objects which contain the ID of the specific light I want to use. 
+## Sending IR Signal to Control the Globe (Spoofing Magic LED Remote Controller)
+ My code uses this library for the IR control [Arduino-IRremote/Arduino-IRremote](https://github.com/Arduino-IRremote/Arduino-IRremote). The IR control codes are based on code found here: [github repo](https://github.com/robertmoro/MagicLightingRemote). This project provides the specific IR commands for the moon lamp I am using, other IR controlled lights might use a different IR protocol and command codes.
 
-### Sending IR Signal to Control the Globe (Spoofing Magic LED Remote Controller)
-w/ ESP8266
+Command Protocol: [NEC](https://exploreembedded.com/wiki/NEC_IR_Remote_Control_Interface_with_8051)
+Command Values (Note, these are defined as uint32_t values in my code):
 
-### Color Handler
-Hue uses the "CIE color space" to define the colors it sets. This is a 2d space which the color spectrum is mapped to.
-My first thought is that I should create a 2d array of colors values which close to the magic controllers available colors. Then, as a color update is pushed, find the closest color in that map to send as an IR command.
+| Command     | Hex Value |
+| :---------- | :-------- |
+| Bright_UP   | FFA05F    |
+| Bright_DOWN | FF20DF    |
+| Shut_OFF    | FF609F    |
+| Turn_ON     | FFE01F    |
+| RED         | FF906F    |
+| GREEN       | FF10EF    |
+| BLUE        | FF50AF    |
+| WHITE       | FFD02F    |
+| FLASH       | FFF00F    |
+| STROBE      | FFE817    |
+| FADE        | FFD827    |
+| SMOOTH      | FFC837    |
+| RED2        | FFB04F    |
+| RED3        | FFA857    |
+| RED4        | FF9867    |
+| RED5        | FF8877    |
+| GREEN2      | FF30CF    |
+| GREEN3      | FF28D7    |
+| GREEN4      | FF18E7    |
+| GREEN5      | FF08F7    |
+| BLUE2       | FF708F    |
+| BLUE3       | FF6897    |
+| BLUE4       | FF58A7    |
+| BLUE5       | FF48B7    |
+The IR transmission code is adapted from the IRremote libraries `SimpleSender.ino`.
+An IR command can be sent through the IR transmitter as follows:
+```c++
+#define DISABLE_CODE_FOR_RECEIVER
+#include "PinDefinitionsAndMore.h"
+#include <IRremote.hpp> // include the library
 
-Mapping this out I realize it becomes more complicated. Can I use the shortest square root path?
+...
 
-Ok, some good research here: [A Beginner’s Guide to (CIE) Colorimetry | by Chandler Abraham | Color and Imaging | Medium](https://medium.com/hipster-color-science/a-beginners-guide-to-colorimetry-401f1830b65a)
+uint8_t nbits = 32;
+uint32_t command=16736415;// = 0xFF609F;
+IrSender.sendNEC(command,nbits);
+```
 
-I have conncluded that the color system hue uses [doesn't have a good linear relationships between colors](http://www.colorbasics.com/CIESystem/#:~:text=CIE%201931%20Gamut,the%20source%20colors). For this reason, I think it will be more effective to define x/y 'zones' for each color. If a given coordinate falls under a particular zone, then it will set the corresponding color for that zone.
+The IRtransmitter module has Vcc (power), GND (Ground), and DAT pins. On the ESP8266 these pins should be connected to any 3V3 and corresponding GND pin; DAT needs to be connected to a specific pin on the ESP8266 which can support pulse width modulation (PWM). That pin on the ESP8266 is PIN12 (GPIO12 or D6). The specific pin can be found with the following code section in the `SimpleSender.ino` program.
+```c++
+// Just to know which program is running on my Arduino
+Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
+Serial.print(F("Send IR signals at pin "));
+Serial.println(IR_SEND_PIN);
+```
 
-Square zones will be easiest, but the 'colorspace' for hue is a triangle. For now lets choose only three colors to set, red, blue, green and define 4 zones for which they exist. Based on the below diagram, we can use the following ranges:
+![ESP8266 Pin Reference](https://www.electrorules.com/wp-content/uploads/2021/07/NodeMCU-ESP8266-Pinout.jpg)
+**A couple of notes:**
+1. The `IrSender.sendNEC(command,nbits);` in the `SimpleSender.ino` uses a different function overload input: `IrSender.sendNEC(0x00, sCommand, sRepeats);`.
 
-- Red: 
-	- 
-- Green:
-- Blue
-	- 0 < x < 0.3
-	- 0 < y < 0.3
-- White - will override rgb spaces
+### Translating the Phillips-Hue Color Data into different IR controller color codes
+**Right now my solution to getting a color is bad and needs to be improved**
+Hue uses the "CIE color space" to define the colors it sets. This is a 2d space which the color spectrum is mapped to. The data from the API looks like this:
+```json
+"color": {
+	"xy": {
+		"x": 0.5665,
+		"y": 0.393
+	}
+```
+X and Y here are coordinates on the CIE color map:
+![CIE 1931 xy Chromaticity Chart](https://img.favpng.com/9/22/23/cie-1931-color-space-chromaticity-gamut-png-favpng-ZCCcQzz086Yhwyiwg1KHqGHi9.jpg)
 
-Actually, a better option might be to divide this diagram into different blocks and set a color for each block.
+Some good research here: [A Beginner’s Guide to (CIE) Colorimetry | by Chandler Abraham | Color and Imaging | Medium](https://medium.com/hipster-color-science/a-beginners-guide-to-colorimetry-401f1830b65a)
+My first thought is that I should create a 2d array of colors values which close to the magic controllers available colors. Then, as a color update is pushed, find the closest color in that map to send as an IR command. Mapping this out I realize it becomes more complicated. Can I use the shortest square root path?
+
+I have concluded that the color system hue uses [doesn't have a good linear relationships between colors](http://www.colorbasics.com/CIESystem/#:~:text=CIE%201931%20Gamut,the%20source%20colors). For this reason, I think it will be more effective to define x/y 'zones' for each color (and not use square root linear path). If a given coordinate falls under a particular zone, then it will set the corresponding color for that zone.
+
+Here are the following manually defined color zones:
 
 | 1   | None  | None  | None  | None  | None  | None | None | None | None | None |
 | --- | ----- | ----- | ----- | ----- | ----- | ---- | ---- | ---- | ---- | ---- |
@@ -445,5 +309,3 @@ Actually, a better option might be to divide this diagram into different blocks 
 | 0.2 | Blue  | Blue  | Blue  | Red   | Red   | Red  | None | None | None | None |
 | 0.1 | None  | Blue  | Blue  | Red   | None  | None | None | None | None | None |
 | 0   | 0.1   | 0.2   | 0.3   | 0.4   | 0.5   | 0.6  | 0.7  | 0.8  | 0.9  | 1    |
-
-![[CIE Color Space.png]]
