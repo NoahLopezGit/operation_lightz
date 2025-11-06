@@ -1,4 +1,4 @@
-## Project Overview
+# Project Overview
 Controlling a 3rd party IR remote controlled LED through the Phillips-Hue lighting system
 
 Demos:
@@ -18,6 +18,9 @@ Concept of operations:
 
 This project is working with this [Levitating Moon Lamp](https://www.amazon.com/VGAzer-Levitating-Floating-Spinning-Printing/dp/B07CR2JYPH/ref=sr_1_7?crid=3GX85ZF9NJFY5&dib=eyJ2IjoiMSJ9.Xn7z8MvuMuKHdWTVc01bqDk6qeGk6q3t2jc2lKmJgvNPJDdJbwNo5Wd_wTgc0rj-eTg7f8K0xyGAuzkzToHNE6rdS4E5WU8yvd1s4K2fPcjvmEJowMOmqKtgY8wjbjjUaCRZgjgu05ICUPWctfe8N9gs2oKWsY--IUp4kIQdsvirCf36yZ7B7CdCKoaiIm90TvYdw7rTX1grbETf3302U3O-K-C_dYDdHkDh5p_qTTIRexIgwcxvOUetipo6wAFYn4rVa0yH6CbapVVR0KCfPrbdxRIEGH8BHqnJUz-nSOY.R6E22jOTyq1MgoRUMVWY0s4bHgMr_b9oUrgh_gqicnc&dib_tag=se&keywords=levitating+moon+lamp&qid=1708794988&sprefix=levitating+m%2Caps%2C179&sr=8-7). Many other IR controlled LEDs use similar control schemes so controlling them is just a matter of figuring out the specific IR protocol and command patterns.
 ![Levitating Moon Lamp|500](https://m.media-amazon.com/images/I/61rLaPELHJL._AC_SX679_.jpg)
+
+# Physical Setup
+![](<IR Transmitter Schematic.png>)
 
 # Setting up the event stream from the Phillips-Hue API
 First, you need to connect to the [hue bridge](https://www.amazon.com/Philips-Hue-Smart-Google-Assistant/dp/B016H0QZ7I/ref=sr_1_1?crid=2UVHT1W5TJJI6&dib=eyJ2IjoiMSJ9.6i4ofTweJSbH-34Kwnx3BefcnJiy8GGDpsduZGs3uSJvn4pbmIHII-4k7hXLDps6zCyrM3lxaAWwggefoNw6oWu5US4sAY01cUmpikWtZ17A_5xj3hGUAiclp_eYNEyL4OKrJtfLTsKClCnTZlU9LPMESXPRthza8fVoPK99z-ZxH9TWruTKXkyDqkkUYsuGD5di03QcTvPu8ACMvu4dciyExwn9JAGCarFidQ3-P3201sf-dA6Y3sNw8E6o9ok2g9z2GJDDKlvP929ZnE0Ke1OOOb-d8rzkCUtBhEwqzIs.Lo1waRPaiGU50nbrKfLyHd2gRS24PQZ529kNLqefCEg&dib_tag=se&keywords=philips+hue+bridge&qid=1708895090&sprefix=phillips+hue+bridg%2Caps%2C179&sr=8-1) which supports the [Phillips-Hue API v2](https://developers.meethue.com/new-hue-api/). Most bridges nowadays support this API version, but if you have an old one it may not. The API is HTTPS based, you will need a device capable of making HTTPS requests (i.e., supports secure socket layer, SSL protocol). There are some libraries which you allow HTTPS connections through microcontrollers like the Ardunio Uno, but the bottom line is that the program size needed to fully support the SSL protocol is too large for most microcontrollers. To perform this connection it is recommended to use a microcontroller which has the space/support for the SSL protocol built in (enter ESP8266). 
