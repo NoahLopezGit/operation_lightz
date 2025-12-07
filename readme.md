@@ -37,10 +37,32 @@ This project is working with this [Levitating Moon Lamp](https://www.amazon.com/
   - ArduinoJson
   - Add the latest stable release of the ESP866 libraries to Arduino's "Additional Board Manager URLs". ```http://arduino.esp8266.com/stable/package_esp8266com_index.json```.
 - Flash the `hue_ir_lightsync.ino` program to the microcontroller
+- need IRremote library as well (from w/in arduino ide)
 
-# Attempting to use other microcontrollers for this
-ESP32-C3 Super Mini
-
-Not sure which pin will work for this.
+# ESP32-C3 Super Mini Setup Notes
+1. Setup Arduino dev environment for esp32-c3: https://www.makerguides.com/esp32-c3-supermini-board/
+2. Configure `esp32_https_connection.ino` with the following:
+   1. `ssid` - your wifi name
+   2. `password` - your wifi password
+   3. `hue_token` - get from hue dev website: https://developers.meethue.com/develop/hue-api-v2/getting-started/
+   4. `light_id` - a light id in your hue ecosystem (which you want to couple with this controller). See hue dev for more details on how to get this
+3. Install Libraries in Arduino
+   1. ArduinoJson
+   3. IRremote
+4. Flash Program to board
+5. Wire board acording to above schematic (use GPIO9 instead of GPIO12 for ESP32-CS Super Mini)
 
 ![alt text](image.png)
+
+**Other Notes**  
+Board Setup in Arduino
+https://www.makerguides.com/esp32-c3-supermini-board/
+
+Use this link to add board libraries?
+https://espressif.github.io/arduino-esp32/package_esp32_index.json
+
+Perform insecure HTTPS request w/ esp32
+https://randomnerdtutorials.com/esp32-https-requests/
+
+Need IRremote library.  
+Checking PinDefinitionsAndMore.h ... I found that the ESP32-C3 super mini will default control out of GPIO9.
