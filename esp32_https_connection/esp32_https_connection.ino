@@ -9,17 +9,20 @@
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 
+// includes for IR control
 #define DISABLE_CODE_FOR_RECEIVER
-#include "PinDefinitionsAndMore.h"
+#include "PinDefinitionsAndMore.h" // where did this come from?
 #include <IRremote.hpp> // include the library
 
 // Replace with your network credentials
-const char* ssid = SSID;
-const char* password = SSID_Password;
-const char* hue_token = HUE_TOKEN;
+const char* ssid = "your_ssid";
+const char* password = "your_password";
 
-// hue color definitions
-//this is cursed
+// hue config
+const char* hue_token = "your_hue_api_token";
+const char *light_id = "your_light_id"; // existing light id to tie controller to
+
+// hue color definitions - this is cursed
 #define Green 16716015
 #define None 16764975
 #define White 16764975
@@ -38,10 +41,11 @@ uint32_t color_picker_array[10][10] = {
   {None,Blue,Blue,Red,None,None,None,None,None,None}
 };
 
-// hue ?
+// data holders
 int dataIndex = 0; // Index to track where to store data
+
+// json start sequence
 char start_sequence[] = "data: ";
-const char *light_id = "238fca10-1896-44ed-8047-a3b6eac70842"; //my bedroom light
 
 void handle_packet(JsonDocument& doc) {
   // serializeJson(doc, Serial);
@@ -75,7 +79,7 @@ void check_command_keys(JsonObject& obj) {
   }
 }
 
-void set_output_status(JsonObject& obj) { // uses esp32 gpio8
+void set_output_status(JsonObject& obj) {
   uint8_t nbits = 32;
   bool on_status = obj["on"];
   Serial.print("Setting Output Status: ");
@@ -112,6 +116,10 @@ void set_color(JsonObject& obj){
 void setup() {
   Serial.begin(115200);
   Serial.println();
+
+  // print IR send pin
+  Serial.println(IR_SEND_PIN); // gpio9 on esp32-c3 super mini
+
   // Initialize Wi-Fi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
